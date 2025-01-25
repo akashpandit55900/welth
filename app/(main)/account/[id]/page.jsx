@@ -1,8 +1,10 @@
-import { getAccountWithTransactions } from '@/actions/account';
-import { notFound } from 'next/navigation';
-import React from 'react'
+import { getAccountWithTransactions } from "@/actions/account";
+import { notFound } from "next/navigation";
+import React, { Suspense } from "react";
+import TransactionTable from "../_components/transaction-table";
+import { BarLoader } from "react-spinners";
 
-const AccountsPage = async ({params}) => {
+const AccountsPage = async ({ params }) => {
   const accountData = await getAccountWithTransactions(params.id);
 
   if (!accountData) {
@@ -26,7 +28,7 @@ const AccountsPage = async ({params}) => {
 
         <div className="text-right pb-2">
           <div className="text-xl sm:text-2xl font-bold">
-            ${parseFloat(account.balance).toFixed(2)}
+            ₹{parseFloat(account.balance).toFixed(2)}
           </div>
           <p className="text-sm text-muted-foreground">
             {account._count.transactions} Transactions
@@ -35,12 +37,15 @@ const AccountsPage = async ({params}) => {
       </div>
 
       {/* Chart Section */}
-     
 
       {/* Transactions Table */}
-    
+      <Suspense
+        fallback={<BarLoader className="mt-4" width={"100%"} color="#9333ea" />}
+      >
+        <TransactionTable transactions={transactions} />
+      </Suspense>
     </div>
   );
-}
+};
 
 export default AccountsPage;
