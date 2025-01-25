@@ -96,7 +96,7 @@ const BudgetProgress = ({initialBudget, currentExpenses}) => {
                   {initialBudget
                     ? `₹${currentExpenses.toFixed(
                         2
-                      )} of $${initialBudget.amount.toFixed(2)} spent`
+                      )} of ₹${initialBudget.amount.toFixed(2)} spent`
                     : "No budget set"}
                 </CardDescription>
                 <Button
@@ -127,7 +127,7 @@ const BudgetProgress = ({initialBudget, currentExpenses}) => {
               }`}
             />
             <p className="text-xs text-muted-foreground text-right">
-              {percentUsed.toFixed(1)}% used
+              {percentUsed.toFixed(2)}% used
             </p>
           </div>
         )}
