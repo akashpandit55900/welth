@@ -24,7 +24,7 @@ export async function getUserAccounts() {
   if (!userId) throw new Error("Unauthorized");
 
   const user = await db.user.findUnique({
-    where: { clerkUserId: userId },
+    where: { clerkUserId: userId }
   });
 
   if (!user) {
@@ -60,7 +60,7 @@ export async function createAccount(data) {
     if (!userId) throw new Error("Unauthorized");
 
     const user = await db.user.findUnique({
-      where: { clerkUserId: userId },
+      where: { clerkUserId: userId }
     });
 
     if (!user) {

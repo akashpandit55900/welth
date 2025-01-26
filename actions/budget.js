@@ -10,7 +10,7 @@ export async function getCurrentBudget(accountId) {
         if (!userId) throw new Error("Unauthorized");
 
         const user = await db.user.findUnique({
-            where: { clerkUserId: userId },
+            where: { clerkUserId: userId }
         });
 
         if (!user) {
@@ -70,7 +70,7 @@ export async function updateBudget(amount) {
         if (!userId) throw new Error("Unauthorized");
 
         const user = await db.user.findUnique({
-            where: { clerkUserId: userId },
+            where: { clerkUserId: userId }
         });
 
         if (!user) throw new Error("User not found");
