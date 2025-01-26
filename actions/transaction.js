@@ -3,17 +3,18 @@
 import { auth } from "@clerk/nextjs/server";
 import { db } from "@/lib/prisma";
 import { revalidatePath } from "next/cache";
-// import { GoogleGenerativeAI } from "@google/generative-ai";
-// import aj from "@/lib/arcjet";
-// import { request } from "@arcjet/next";
+import { GoogleGenerativeAI } from "@google/generative-ai";
+import aj from "@/lib/arcjet";
+import { request } from "@arcjet/next";
 
-// const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
+
+const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
 
 const serializeAmount = (obj) => ({
     ...obj,
     amount: obj.amount.toNumber(),
-  });
-  
+});
+
 // Create Transaction
 export async function createTransaction(data) {
     try {
@@ -21,7 +22,32 @@ export async function createTransaction(data) {
         if (!userId) throw new Error("Unauthorized");
 
         // Get request data for ArcJet
+        const req = await request();
 
+        // Check rate limit
+        const decision = await aj.protect(req, {
+            userId,
+            requested: 1, // Specify how many tokens to consume
+        });
+
+        if (decision.isDenied()) {
+            if (decision.reason.isRateLimit()) {
+                const { remaining, reset } = decision.reason;
+                console.error({
+                    code: "RATE_LIMIT_EXCEEDED",
+                    details: {
+                        remaining,
+                        resetInSeconds: reset,
+                    },
+                });
+
+                throw new Error("Too many requests. Please try again later.");
+            }
+
+            throw new Error("Request blocked");
+        }
+
+        // Fetch user and account details
         const user = await db.user.findUnique({
             where: { clerkUserId: userId },
         });
@@ -74,6 +100,7 @@ export async function createTransaction(data) {
     }
 }
 
+
 // Helper function to calculate next recurring date
 function calculateNextRecurringDate(startDate, interval) {
     const date = new Date(startDate);
@@ -95,3 +122,7 @@ function calculateNextRecurringDate(startDate, interval) {
 
     return date;
 }
+
+
+// Scan Receipt
+export async function scanReceipt(file) {}
