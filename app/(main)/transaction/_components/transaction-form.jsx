@@ -94,7 +94,7 @@ const AddTransactionForm = ({
     } else {
       transactionFn(formData);
     }
-    transactionFn(formData);
+    // transactionFn(formData);
   };
 
   useEffect(() => {
